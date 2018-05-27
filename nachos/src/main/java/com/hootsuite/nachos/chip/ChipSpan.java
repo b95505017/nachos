@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.chip.ChipDrawable;
 import android.support.v4.content.ContextCompat;
 import android.text.style.ImageSpan;
 
@@ -72,6 +73,7 @@ public class ChipSpan extends ImageSpan implements Chip {
 
     private Drawable mIcon;
     private boolean mShowIconOnLeft = ICON_ON_LEFT_DEFAULT;
+    private ChipDrawable mChipDrawable;
 
     private int mChipVerticalSpacing = 0;
     private int mChipHeight = -1;
@@ -90,7 +92,10 @@ public class ChipSpan extends ImageSpan implements Chip {
      * @param icon    an optional icon (can be {@code null}) for the ChipSpan to display
      */
     public ChipSpan(@NonNull Context context, @NonNull CharSequence text, @Nullable Drawable icon, Object data) {
-        super(icon);
+        super(ChipDrawable.createFromResource(context, R.xml.chip));
+        mChipDrawable = (ChipDrawable) getDrawable();
+        mChipDrawable.setChipText(text);
+        mChipDrawable.setBounds(0, 0, mChipDrawable.getIntrinsicWidth(), mChipDrawable.getIntrinsicHeight());
         mIcon = icon;
         mText = text;
         mTextToDraw = mText.toString();
@@ -274,46 +279,46 @@ public class ChipSpan extends ImageSpan implements Chip {
     @Override
     public int getWidth() {
         // If we haven't actually calculated a chip width yet just return -1, otherwise return the chip width + margins
-        return mChipWidth != -1 ? (mLeftMarginPx + mChipWidth + mRightMarginPx) : -1;
+        return mChipDrawable.getIntrinsicWidth();
     }
 
-    @Override
-    public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        boolean usingFontMetrics = (fm != null);
-
-        // Adjust the font metrics regardless of whether or not there is a cached size so that the text view can maintain its height
-        if (usingFontMetrics) {
-            adjustFontMetrics(paint, fm);
-        }
-
-        if (mCachedSize == -1 && usingFontMetrics) {
-            mIconWidth = (mIcon != null) ? calculateChipHeight(fm.top, fm.bottom) : 0;
-
-            int actualWidth = calculateActualWidth(paint);
-            mCachedSize = actualWidth;
-
-            if (mMaxAvailableWidth != -1) {
-                int maxAvailableWidthMinusMargins = mMaxAvailableWidth - mLeftMarginPx - mRightMarginPx;
-                if (actualWidth > maxAvailableWidthMinusMargins) {
-                    mTextToDraw = mText + mEllipsis;
-
-                    while ((calculateActualWidth(paint) > maxAvailableWidthMinusMargins) && mTextToDraw.length() > 0) {
-                        int lastCharacterIndex = mTextToDraw.length() - mEllipsis.length() - 1;
-                        if (lastCharacterIndex < 0) {
-                            break;
-                        }
-                        mTextToDraw = mTextToDraw.substring(0, lastCharacterIndex) + mEllipsis;
-                    }
-
-                    // Avoid a negative width
-                    mChipWidth = Math.max(0, maxAvailableWidthMinusMargins);
-                    mCachedSize = mMaxAvailableWidth;
-                }
-            }
-        }
-
-        return mCachedSize;
-    }
+    // @Override
+    // public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+    //     boolean usingFontMetrics = (fm != null);
+    //
+    //     // Adjust the font metrics regardless of whether or not there is a cached size so that the text view can maintain its height
+    //     if (usingFontMetrics) {
+    //         adjustFontMetrics(paint, fm);
+    //     }
+    //
+    //     if (mCachedSize == -1 && usingFontMetrics) {
+    //         mIconWidth = (mIcon != null) ? calculateChipHeight(fm.top, fm.bottom) : 0;
+    //
+    //         int actualWidth = calculateActualWidth(paint);
+    //         mCachedSize = actualWidth;
+    //
+    //         if (mMaxAvailableWidth != -1) {
+    //             int maxAvailableWidthMinusMargins = mMaxAvailableWidth - mLeftMarginPx - mRightMarginPx;
+    //             if (actualWidth > maxAvailableWidthMinusMargins) {
+    //                 mTextToDraw = mText + mEllipsis;
+    //
+    //                 while ((calculateActualWidth(paint) > maxAvailableWidthMinusMargins) && mTextToDraw.length() > 0) {
+    //                     int lastCharacterIndex = mTextToDraw.length() - mEllipsis.length() - 1;
+    //                     if (lastCharacterIndex < 0) {
+    //                         break;
+    //                     }
+    //                     mTextToDraw = mTextToDraw.substring(0, lastCharacterIndex) + mEllipsis;
+    //                 }
+    //
+    //                 // Avoid a negative width
+    //                 mChipWidth = Math.max(0, maxAvailableWidthMinusMargins);
+    //                 mCachedSize = mMaxAvailableWidth;
+    //             }
+    //         }
+    //     }
+    //
+    //     return mCachedSize;
+    // }
 
     private int calculateActualWidth(Paint paint) {
         // Only change the text size if a text size was set
@@ -391,25 +396,25 @@ public class ChipSpan extends ImageSpan implements Chip {
         return mChipHeight != -1 ? mChipHeight : bottom - top;
     }
 
-    @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-        // Shift everything mLeftMarginPx to the left to create an empty space on the left (creating the margin)
-        x += mLeftMarginPx;
-        if (mChipHeight != -1) {
-            // If we set a chip height, adjust to vertically center chip in the line
-            // Adding (bottom - top) / 2 shifts the chip down so the top of it will be centered vertically
-            // Subtracting (mChipHeight / 2) shifts the chip back up so that the center of it will be centered vertically (as desired)
-            top += ((bottom - top) / 2) - (mChipHeight / 2);
-            bottom = top + mChipHeight;
-        }
-
-        // Perform actual drawing
-        drawBackground(canvas, x, top, bottom, paint);
-        drawText(canvas, x, top, bottom, paint, mTextToDraw);
-        if (mIcon != null) {
-            drawIcon(canvas, x, top, bottom, paint);
-        }
-    }
+    // @Override
+    // public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    //     // Shift everything mLeftMarginPx to the left to create an empty space on the left (creating the margin)
+    //     x += mLeftMarginPx;
+    //     if (mChipHeight != -1) {
+    //         // If we set a chip height, adjust to vertically center chip in the line
+    //         // Adding (bottom - top) / 2 shifts the chip down so the top of it will be centered vertically
+    //         // Subtracting (mChipHeight / 2) shifts the chip back up so that the center of it will be centered vertically (as desired)
+    //         top += ((bottom - top) / 2) - (mChipHeight / 2);
+    //         bottom = top + mChipHeight;
+    //     }
+    //
+    //     // Perform actual drawing
+    //     drawBackground(canvas, x, top, bottom, paint);
+    //     drawText(canvas, x, top, bottom, paint, mTextToDraw);
+    //     if (mIcon != null) {
+    //         drawIcon(canvas, x, top, bottom, paint);
+    //     }
+    // }
 
     private void drawBackground(Canvas canvas, float x, int top, int bottom, Paint paint) {
         int backgroundColor = mBackgroundColor.getColorForState(mStateSet, mBackgroundColor.getDefaultColor());

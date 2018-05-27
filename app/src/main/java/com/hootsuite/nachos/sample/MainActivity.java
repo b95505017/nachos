@@ -78,18 +78,19 @@ public class MainActivity extends AppCompatActivity {
         }, ChipSpan.class));
     }
 
-    private void setupChipTextView(NachoTextView nachoTextView) {
+    private void setupChipTextView(final NachoTextView nachoTextView) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, SUGGESTIONS);
         nachoTextView.setAdapter(adapter);
         nachoTextView.setIllegalCharacters('\"');
         nachoTextView.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL);
-        nachoTextView.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
-        nachoTextView.addChipTerminator(';', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_CURRENT_TOKEN);
+        // nachoTextView.addChipTerminator(' ', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_TO_TERMINATOR);
+        // nachoTextView.addChipTerminator(';', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_CURRENT_TOKEN);
         nachoTextView.setNachoValidator(new ChipifyingNachoValidator());
-        nachoTextView.enableEditChipOnTouch(true, true);
+        // nachoTextView.enableEditChipOnTouch(true, true);
         nachoTextView.setOnChipClickListener(new NachoTextView.OnChipClickListener() {
             @Override
             public void onChipClick(Chip chip, MotionEvent motionEvent) {
+                nachoTextView.getChipTokenizer().deleteChip(chip, nachoTextView.getText());
                 Log.d(TAG, "onChipClick: " + chip.getText());
             }
         });

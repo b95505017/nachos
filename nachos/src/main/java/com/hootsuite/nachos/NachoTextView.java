@@ -14,6 +14,7 @@ import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatMultiAutoCompleteTextView;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.TextUtils;
@@ -121,7 +122,7 @@ import java.util.Map;
  * @see DefaultChipTerminatorHandler
  * @see ChipifyingNachoValidator
  */
-public class NachoTextView extends MultiAutoCompleteTextView implements TextWatcher, AdapterView.OnItemClickListener {
+public class NachoTextView extends AppCompatMultiAutoCompleteTextView implements TextWatcher, AdapterView.OnItemClickListener {
 
     // UI Attributes
     private int mChipSpacing = -1;
