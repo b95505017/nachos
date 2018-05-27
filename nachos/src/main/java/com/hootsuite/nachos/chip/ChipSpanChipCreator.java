@@ -2,7 +2,6 @@ package com.hootsuite.nachos.chip;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 
 import com.hootsuite.nachos.ChipConfiguration;
@@ -40,12 +39,12 @@ public class ChipSpanChipCreator implements ChipCreator<ChipSpan> {
         if (chipCornerRadius != -1) {
             chip.setCornerRadius(chipCornerRadius);
         }
-        if (chipTextColor != Color.TRANSPARENT) {
-            chip.setTextColor(chipTextColor);
-        }
-        if (chipTextSize != -1) {
-            chip.setTextSize(chipTextSize);
-        }
+        // if (chipTextColor != Color.TRANSPARENT) {
+        //     chip.setTextColor(chipTextColor);
+        // }
+        // if (chipTextSize != -1) {
+        //     chip.setTextSize(chipTextSize);
+        // }
         if (chipHeight != -1) {
             chip.setChipHeight(chipHeight);
         }

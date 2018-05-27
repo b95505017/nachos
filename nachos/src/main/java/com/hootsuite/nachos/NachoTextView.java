@@ -623,7 +623,7 @@ public class NachoTextView extends AppCompatMultiAutoCompleteTextView implements
 
     private void clearChipStates() {
         for (Chip chip : getAllChips()) {
-            chip.setState(View.EMPTY_STATE_SET);
+            chip.setState(View.ENABLED_STATE_SET);
         }
     }
 
